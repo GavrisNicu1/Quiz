@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProductsPage from "./pages/ProductsPage";
+import ProductDetailsPage from "./pages/ProductDetailsPage";
 import CartPage from "./pages/CartPage";
 import OrdersPage from "./pages/OrdersPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
@@ -13,6 +14,7 @@ const App = () => (
   <Routes>
     <Route element={<Layout />}>
       <Route index element={<ProductsPage />} />
+      <Route path="products/:id" element={<ProductDetailsPage />} />
       <Route
         path="cart"
         element={

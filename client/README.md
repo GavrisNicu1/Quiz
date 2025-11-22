@@ -1,6 +1,6 @@
-# Quiz Shop Frontend
+# G Shop Frontend
 
-Interfață React (Vite + TypeScript) pentru magazinul online Quiz Shop. Aplicația consumă API-ul backend-ului Express/Prisma și oferă fluxuri pentru autentificare, vizualizarea produselor, gestionarea coșului și ecrane dedicate administratorului.
+Interfață React (Vite + TypeScript) pentru magazinul online G Shop. Aplicația consumă API-ul backend-ului Express/Prisma și oferă fluxuri pentru autentificare, vizualizarea produselor, gestionarea coșului și ecrane dedicate administratorului.
 
 ## Cerințe
 

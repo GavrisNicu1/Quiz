@@ -1,8 +1,10 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useCart } from "../hooks/useCart";
 
 const Layout = () => {
   const { user, logout } = useAuth();
+  const { count } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -16,7 +18,7 @@ const Layout = () => {
         <div className="container">
           <nav>
             <Link to="/" className="logo">
-              Quiz Shop
+              G Shop
             </Link>
             <ul>
               <li>
@@ -25,7 +27,10 @@ const Layout = () => {
               {user && (
                 <>
                   <li>
-                    <NavLink to="/cart">Coș</NavLink>
+                    <NavLink to="/cart" className="cart-link">
+                      Coș
+                      {count > 0 && <span className="cart-badge">{count}</span>}
+                    </NavLink>
                   </li>
                   <li>
                     <NavLink to="/orders">Comenzile mele</NavLink>

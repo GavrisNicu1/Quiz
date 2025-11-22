@@ -6,9 +6,23 @@ export declare const listProducts: () => Promise<{
     description: string;
     imageUrl: string;
     stock: number;
+    category?: string | null;
+    subcategory?: string | null;
     createdAt: string;
     updatedAt?: string;
 }[]>;
+export declare const getProduct: (id: string) => Promise<{
+    price: number;
+    id: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+    stock: number;
+    category?: string | null;
+    subcategory?: string | null;
+    createdAt: string;
+    updatedAt?: string;
+}>;
 export declare const createProduct: (product: Partial<Product>) => Promise<{
     price: number;
     id: string;
@@ -16,6 +30,8 @@ export declare const createProduct: (product: Partial<Product>) => Promise<{
     description: string;
     imageUrl: string;
     stock: number;
+    category?: string | null;
+    subcategory?: string | null;
     createdAt: string;
     updatedAt?: string;
 }>;
@@ -26,6 +42,8 @@ export declare const updateProduct: (id: string, product: Partial<Product>) => P
     description: string;
     imageUrl: string;
     stock: number;
+    category?: string | null;
+    subcategory?: string | null;
     createdAt: string;
     updatedAt?: string;
 }>;

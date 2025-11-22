@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { listProducts } from "../api/products";
 import { addCartItem } from "../api/cart";
 import type { Product } from "../types";
 import { useAuth } from "../hooks/useAuth";
+import { useCart } from "../hooks/useCart";
+import { resolveImageUrl } from "../utils/image";
 
 const currency = new Intl.NumberFormat("ro-RO", {
   style: "currency",
@@ -12,6 +15,7 @@ const currency = new Intl.NumberFormat("ro-RO", {
 
 const ProductsPage = () => {
   const { user } = useAuth();
+  const { refreshCart } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +44,7 @@ const ProductsPage = () => {
     try {
       setAddingProductId(productId);
       await addCartItem({ productId, quantity: 1 });
+      await refreshCart();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Nu s-a putut adăuga produsul");
     } finally {
@@ -60,18 +65,29 @@ const ProductsPage = () => {
     return (
       <div className="card-grid">
         {products.map((product) => (
-          <article className="card" key={product.id}>
-            <h3>{product.name}</h3>
+          <article className="card product-card" key={product.id}>
+            <Link to={`/products/${product.id}`} className="product-card__image" aria-label={`Vezi ${product.name}`}>
+              <img src={resolveImageUrl(product.imageUrl)} alt={product.name} />
+            </Link>
+            <div>
+              <h3>{product.name}</h3>
+              {product.category && <small className="badge">{product.category}</small>}
+            </div>
             <p>{product.description}</p>
             <p>
               <strong>{currency.format(product.price)}</strong>
             </p>
-            <button
-              onClick={() => handleAddToCart(product.id)}
-              disabled={!user || addingProductId === product.id}
-            >
-              {!user ? "Autentifică-te" : addingProductId === product.id ? "Se adaugă..." : "Adaugă în coș"}
-            </button>
+            <div className="product-card__actions">
+              <Link to={`/products/${product.id}`} className="outline-btn">
+                Vezi detalii
+              </Link>
+              <button
+                onClick={() => handleAddToCart(product.id)}
+                disabled={!user || addingProductId === product.id}
+              >
+                {!user ? "Autentifică-te" : addingProductId === product.id ? "Se adaugă..." : "Adaugă în coș"}
+              </button>
+            </div>
           </article>
         ))}
       </div>

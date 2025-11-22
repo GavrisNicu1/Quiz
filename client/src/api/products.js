@@ -7,6 +7,10 @@ export const listProducts = async () => {
     const { data } = await http.get("/api/products");
     return data.products.map(normalizeProduct);
 };
+export const getProduct = async (id) => {
+    const { data } = await http.get(`/api/products/${id}`);
+    return normalizeProduct(data.product);
+};
 export const createProduct = async (product) => {
     const { data } = await http.post("/api/products", product);
     return normalizeProduct(data.product);

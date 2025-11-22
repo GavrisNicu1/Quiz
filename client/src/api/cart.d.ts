@@ -6,6 +6,8 @@ export declare const fetchCart: () => Promise<{
         description: string;
         imageUrl: string;
         stock: number;
+        category?: string | null;
+        subcategory?: string | null;
         createdAt: string;
         updatedAt?: string;
     };
@@ -24,6 +26,8 @@ export declare const addCartItem: (payload: {
         description: string;
         imageUrl: string;
         stock: number;
+        category?: string | null;
+        subcategory?: string | null;
         createdAt: string;
         updatedAt?: string;
     };
@@ -41,6 +45,8 @@ export declare const updateCartItem: (id: string, payload: {
         description: string;
         imageUrl: string;
         stock: number;
+        category?: string | null;
+        subcategory?: string | null;
         createdAt: string;
         updatedAt?: string;
     };

@@ -11,6 +11,11 @@ export const listProducts = async () => {
   return data.products.map(normalizeProduct);
 };
 
+export const getProduct = async (id: string) => {
+  const { data } = await http.get<{ product: Product }>(`/api/products/${id}`);
+  return normalizeProduct(data.product);
+};
+
 export const createProduct = async (product: Partial<Product>) => {
   const { data } = await http.post<{ product: Product }>("/api/products", product);
   return normalizeProduct(data.product);

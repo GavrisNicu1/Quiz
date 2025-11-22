@@ -1,14 +1,18 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { listProducts } from "../api/products";
 import { addCartItem } from "../api/cart";
 import { useAuth } from "../hooks/useAuth";
+import { useCart } from "../hooks/useCart";
+import { resolveImageUrl } from "../utils/image";
 const currency = new Intl.NumberFormat("ro-RO", {
     style: "currency",
     currency: "RON",
 });
 const ProductsPage = () => {
     const { user } = useAuth();
+    const { refreshCart } = useCart();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -37,6 +41,7 @@ const ProductsPage = () => {
         try {
             setAddingProductId(productId);
             await addCartItem({ productId, quantity: 1 });
+            await refreshCart();
         }
         catch (err) {
             setError(err instanceof Error ? err.message : "Nu s-a putut adăuga produsul");
@@ -55,7 +60,7 @@ const ProductsPage = () => {
         if (products.length === 0) {
             return _jsx("p", { children: "Nu exist\u0103 produse \u00EEn catalog \u00EEn acest moment." });
         }
-        return (_jsx("div", { className: "card-grid", children: products.map((product) => (_jsxs("article", { className: "card", children: [_jsx("h3", { children: product.name }), _jsx("p", { children: product.description }), _jsx("p", { children: _jsx("strong", { children: currency.format(product.price) }) }), _jsx("button", { onClick: () => handleAddToCart(product.id), disabled: !user || addingProductId === product.id, children: !user ? "Autentifică-te" : addingProductId === product.id ? "Se adaugă..." : "Adaugă în coș" })] }, product.id))) }));
+        return (_jsx("div", { className: "card-grid", children: products.map((product) => (_jsxs("article", { className: "card product-card", children: [_jsx(Link, { to: `/products/${product.id}`, className: "product-card__image", "aria-label": `Vezi ${product.name}`, children: _jsx("img", { src: resolveImageUrl(product.imageUrl), alt: product.name }) }), _jsxs("div", { children: [_jsx("h3", { children: product.name }), product.category && _jsx("small", { className: "badge", children: product.category })] }), _jsx("p", { children: product.description }), _jsx("p", { children: _jsx("strong", { children: currency.format(product.price) }) }), _jsxs("div", { className: "product-card__actions", children: [_jsx(Link, { to: `/products/${product.id}`, className: "outline-btn", children: "Vezi detalii" }), _jsx("button", { onClick: () => handleAddToCart(product.id), disabled: !user || addingProductId === product.id, children: !user ? "Autentifică-te" : addingProductId === product.id ? "Se adaugă..." : "Adaugă în coș" })] })] }, product.id))) }));
     }, [addingProductId, error, loading, products, user]);
     return (_jsxs("section", { children: [_jsxs("header", { children: [_jsx("h1", { children: "Produsele disponibile" }), _jsx("p", { children: "Adaug\u0103 rapid \u00EEn co\u0219 orice produs din catalog." })] }), content] }));
 };

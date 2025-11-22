@@ -2,12 +2,33 @@ import asyncHandler from "express-async-handler";
 import type { Request, Response } from "express";
 
 import { prisma } from "../config/prisma";
+import type { Prisma } from "@prisma/client";
+
+// În productController.ts
 
 export const listProducts = asyncHandler(async (_req: Request, res: Response) => {
-  const products = await prisma.product.findMany({
-    orderBy: { createdAt: "desc" },
-  });
-  res.json({ products });
+  console.log("1. A început request-ul pentru produse...");
+  
+  try {
+    // Încercăm să citim din bază
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    
+    console.log("2. Succes! Am găsit " + products.length + " produse.");
+    res.json({ products });
+
+  } catch (error) {
+    // AICI ESTE CHEIA: Afișăm eroarea completă în consolă
+    console.error("------------------------------------------------");
+    console.error("🛑 EROARE CRITICĂ PRISMA 🛑");
+    console.error(error); 
+    console.error("------------------------------------------------");
+    
+    // Aruncăm eroarea mai departe ca să nu blocăm request-ul, dar acum o vedem în terminal
+    res.status(500);
+    throw new Error("Nu s-au putut încărca produsele: " + (error as Error).message);
+  }
 });
 
 export const getProduct = asyncHandler(async (req: Request, res: Response) => {
@@ -21,13 +42,41 @@ export const getProduct = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const createProduct = asyncHandler(async (req: Request, res: Response) => {
-  const product = await prisma.product.create({ data: req.body });
+  const payload = req.body as Prisma.ProductCreateInput;
+  const product = await prisma.product.create({
+    data: {
+      ...payload,
+      category: payload.category ?? "General",
+    },
+  });
   res.status(201).json({ product });
 });
 
 export const updateProduct = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const product = await prisma.product.update({ where: { id }, data: req.body });
+  const allowedFields: Array<keyof Prisma.ProductUpdateInput> = [
+    "name",
+    "description",
+    "price",
+    "stock",
+    "imageUrl",
+    "category",
+  ];
+
+  const data = allowedFields.reduce<Prisma.ProductUpdateInput>((acc, key) => {
+    const value = (req.body as Record<string, unknown>)[key as string];
+    if (value !== undefined) {
+      acc[key] = value as never;
+    }
+    return acc;
+  }, {});
+
+  if (Object.keys(data).length === 0) {
+    res.status(400);
+    throw new Error("No valid fields provided for update");
+  }
+
+  const product = await prisma.product.update({ where: { id }, data });
   res.json({ product });
 });
 

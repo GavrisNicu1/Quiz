@@ -1,30 +1,20 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useMemo, useState } from "react";
-import { fetchCart, updateCartItem, removeCartItem, clearCart } from "../api/cart";
+import { updateCartItem, removeCartItem, clearCart } from "../api/cart";
 import { checkoutOrder } from "../api/orders";
+import { useCart } from "../hooks/useCart";
 const CartPage = () => {
-    const [items, setItems] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { items, setItems, loading, refreshCart } = useCart();
     const [error, setError] = useState(null);
     const [shippingAddress, setShippingAddress] = useState("Strada Exemplu 10, București");
     const [checkoutMessage, setCheckoutMessage] = useState(null);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
-    const loadCart = async () => {
-        setError(null);
-        try {
-            const data = await fetchCart();
-            setItems(data);
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "Nu pot încărca coșul");
-        }
-        finally {
-            setLoading(false);
-        }
-    };
     useEffect(() => {
-        void loadCart();
-    }, []);
+        setError(null);
+        void refreshCart().catch((err) => {
+            setError(err instanceof Error ? err.message : "Nu pot încărca coșul");
+        });
+    }, [refreshCart]);
     const subtotal = useMemo(() => items.reduce((sum, item) => sum + item.product.price * item.quantity, 0), [items]);
     const handleQuantityChange = async (itemId, quantity) => {
         if (quantity < 1)
@@ -56,7 +46,7 @@ const CartPage = () => {
             setCheckoutMessage(null);
             await checkoutOrder({ shippingAddress });
             setCheckoutMessage("Comanda a fost trimisă!");
-            await loadCart();
+            await refreshCart();
         }
         catch (err) {
             setError(err instanceof Error ? err.message : "Nu pot finaliza comanda");

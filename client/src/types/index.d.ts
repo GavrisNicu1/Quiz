@@ -12,6 +12,8 @@ export interface Product {
     price: number;
     imageUrl: string;
     stock: number;
+    category?: string | null;
+    subcategory?: string | null;
     createdAt: string;
     updatedAt?: string;
 }
@@ -39,4 +41,11 @@ export interface Order {
 export interface AuthResponse {
     user: User;
     token: string;
+}
+export interface AdminStats {
+    ordersToday: number;
+    totalRevenue: number;
+    lowStockCount: number;
+    pendingProcessingCount: number;
+    deliveredCount: number;
 }
