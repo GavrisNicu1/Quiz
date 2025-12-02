@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -15,88 +16,87 @@ async function main() {
 
   console.log("🗑️  Datele vechi au fost șterse.");
 
-  // 2. Creăm un User Admin și un Client (ca să te poți loga)
-  // Notă: Parolele ar trebui hash-uite în mod real (bcrypt), aici punem text simplu doar pt demo
+  // 2. Creăm un User Admin și un Client (cu parole hash-uite real)
+  const adminPassword = await bcrypt.hash("admin123", 10);
+  const clientPassword = await bcrypt.hash("client123", 10);
+
   await prisma.user.createMany({
     data: [
       {
-        email: "admin@quizshop.local",
-        name: "Admin User",
-        passwordHash: "$2b$10$P.DummyHashForAdmin123", // Parola simulată
+        email: "admin@gmail.com",
+        name: "Admin1",
+        passwordHash: adminPassword,
         role: "ADMIN",
       },
       {
-        email: "client@quizshop.local",
+        email: "client@gmail.com",
         name: "Client User",
-        passwordHash: "$2b$10$P.DummyHashForClient123", // Parola simulată
+        passwordHash: clientPassword,
         role: "USER",
       },
     ],
   });
 
-  console.log("👤 Userii au fost creați.");
+  console.log("👤 Userii au fost creați (admin@gmail.com / admin123).");
 
-  // 3. Creăm Produsele cu Categoriile și Subcategoriile cerute
+  // 3. Creăm Produsele cu imaginile placeholder simple
   await prisma.product.createMany({
     data: [
-      // --- CATEGORIA: ELECTROCASNICE ---
       {
-        name: "Smart TV Samsung 4K",
-        description: "Televizor Ultra HD, diagonală 138 cm, funcții Smart.",
-        price: 2499.99,
-        stock: 10,
-        imageUrl: "/uploads/tv_samsung.jpg",
-        category: "Electrocasnice",
-        subcategory: "TV",
+        name: "Blugi Tommy Hilfiger",
+        description: "100% Bumbac, culoare bleumarin, mărimea XL, culoate bleumarin.",
+        price: 250.00,
+        stock: 4,
+        imageUrl: "https://placehold.co/400x300/f4d9bd/8a4f32?text=Blugi",
+        category: "Electronice",
       },
       {
-        name: "iPhone 15 Pro",
-        description: "Telefon mobil Apple, 256GB, Titan Natural.",
-        price: 5999.99,
+        name: "iPhone 17 pro max",
+        description: "Iphone 17 pro max stocare 256 GB, 256GB, Titan Natural.",
+        price: 7500.00,
         stock: 5,
-        imageUrl: "/uploads/iphone15.jpg",
-        category: "Electrocasnice",
-        subcategory: "Telefoane",
+        imageUrl: "https://placehold.co/400x300/f4d9bd/8a4f32?text=iPhone+15",
+        category: "Electronice",
       },
-
-      // --- CATEGORIA: HAINE ---
       {
         name: "Tricou Polo Ralph Lauren",
         description: "Tricou din bumbac 100%, culoare bleumarin, mărimea L.",
-        price: 350.00,
+        price: 250.00,
         stock: 20,
-        imageUrl: "/uploads/tricou_polo.jpg",
+        imageUrl: "https://placehold.co/400x300/f4d9bd/8a4f32?text=Tricou",
         category: "Haine",
-        subcategory: "Imbracaminte",
       },
       {
         name: "Adidasi Nike Air Max",
         description: "Încălțăminte sport pentru alergare, foarte comozi.",
         price: 450.00,
         stock: 15,
-        imageUrl: "/uploads/nike_air.jpg",
-        category: "Haine",
-        subcategory: "Incaltaminte",
+        imageUrl: "https://placehold.co/400x300/f4d9bd/8a4f32?text=Adidasi",
+        category: "Incaltaminte",
       },
-
-      // --- CATEGORIA: JUCARII ---
       {
         name: "Puzzle 1000 Piese Peisaj",
         description: "Puzzle complex cu peisaj montan, ideal pentru relaxare.",
         price: 89.00,
         stock: 30,
-        imageUrl: "/uploads/puzzle.jpg",
+        imageUrl: "https://placehold.co/400x300/f4d9bd/8a4f32?text=Puzzle",
         category: "Jucarii",
-        subcategory: "Puzzle",
       },
       {
         name: "Turn Montessori Lemn",
         description: "Jucărie educativă din lemn pentru dezvoltarea motricității.",
         price: 120.00,
         stock: 12,
-        imageUrl: "/uploads/montessori.jpg",
+        imageUrl: "https://placehold.co/400x300/f4d9bd/8a4f32?text=Montessori",
         category: "Jucarii",
-        subcategory: "Montessori",
+      },
+      {
+        name: "Smart TV Samsung 4K",
+        description: "Televizor Ultra HD, diagonală 138 cm, funcții Smart.",
+        price: 2499.99,
+        stock: 10,
+        imageUrl: "https://placehold.co/400x300/f4d9bd/8a4f32?text=Smart+TV",
+        category: "Electronice",
       },
     ],
   });
