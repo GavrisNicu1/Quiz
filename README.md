@@ -1,4 +1,4 @@
-# Quiz Shop
+# Ecommerce
 
 Aplicație e-commerce full-stack construită cu **Node.js + Express + Prisma (SQL Server)** pentru backend și **React + Vite + TypeScript** pentru frontend. Platforma oferă autentificare cu roluri (USER/ADMIN), administrare de produse, coș de cumpărături cu actualizări în timp real și procesare de comenzi.
 
